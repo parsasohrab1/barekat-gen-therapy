@@ -1,0 +1,7 @@
+Patient Aggregate
+
+Patient
+ |
+ ├── MedicalRecord
+ |
+ └── GenomeSamples
