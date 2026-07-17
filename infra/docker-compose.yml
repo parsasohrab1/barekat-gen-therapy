@@ -1,0 +1,170 @@
+services:
+  api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://barekat:barekat@postgres:5432/barekat_gen_therapy
+      REDIS_URL: redis://redis:6379/0
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: barekat
+      MINIO_SECRET_KEY: barekat_minio
+      MINIO_BUCKET: barekat-artifacts
+      MINIO_SECURE: "false"
+      PYTHONPATH: /app:/data
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+      AUTH_ENABLED: "true"
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_ENABLED: "true"
+      LOG_LEVEL: INFO
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_ENABLED: "true"
+      MQTT_BROKER_HOST: mosquitto
+      MQTT_ENABLED: "true"
+      LIMS_BASE_URL: http://api:8000/api/v1/lab/lims/mock
+      LIMS_ENABLED: "true"
+    volumes:
+      - ../backend:/app
+      - ../data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      qdrant:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+      mlflow:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  worker:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    command: celery -A workers.celery_app worker --loglevel=info
+    environment:
+      DATABASE_URL: postgresql+psycopg://barekat:barekat@postgres:5432/barekat_gen_therapy
+      REDIS_URL: redis://redis:6379/0
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: barekat
+      MINIO_SECRET_KEY: barekat_minio
+      MINIO_BUCKET: barekat-artifacts
+      MINIO_SECURE: "false"
+      PYTHONPATH: /app:/data
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_ENABLED: "true"
+      LOG_LEVEL: INFO
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_ENABLED: "true"
+      MQTT_BROKER_HOST: mosquitto
+      MQTT_ENABLED: "true"
+    volumes:
+      - ../backend:/app
+      - ../data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_started
+      mlflow:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: barekat
+      POSTGRES_PASSWORD: barekat
+      POSTGRES_DB: barekat_gen_therapy
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U barekat -d barekat_gen_therapy"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: barekat
+      MINIO_ROOT_PASSWORD: barekat_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 barekat barekat_minio &&
+      mc mb --ignore-existing local/barekat-artifacts &&
+      exit 0
+      "
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.18.0
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlflow/mlflow.db --default-artifact-root /mlflow/artifacts
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+volumes:
+  postgres_data:
+  minio_data:
+  mlflow_data:
+  qdrant_data:

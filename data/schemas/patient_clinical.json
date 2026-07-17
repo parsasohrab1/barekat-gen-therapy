@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PatientClinicalRecord",
+  "type": "object",
+  "required": ["Patient_ID", "Age", "Gender", "Disease_Severity"],
+  "properties": {
+    "Patient_ID": { "type": "string", "pattern": "^GT_\\d{4}$" },
+    "Age": { "type": "integer", "minimum": 10, "maximum": 80 },
+    "Gender": { "type": "string", "enum": ["Male", "Female"] },
+    "Disease_Severity": { "type": "number", "minimum": 1, "maximum": 10 },
+    "Time_to_Recovery_days": { "type": "number", "minimum": 0 },
+    "Event_Status": { "type": "integer", "enum": [0, 1] },
+    "Treatment_Response": { "type": "integer", "enum": [0, 1] },
+    "Toxicity_Level": { "type": "number", "minimum": 0, "maximum": 4 },
+    "Cytokine_Storm": { "type": "integer", "enum": [0, 1] }
+  }
+}

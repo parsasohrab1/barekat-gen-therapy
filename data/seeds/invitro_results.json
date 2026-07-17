@@ -1,0 +1,37 @@
+[
+  {
+    "sample_external_id": "LIMS-2026-002",
+    "lipid_smiles": "CCCCCCCCCCCCCCCC(=O)OC[C@H](COP(=O)(O)OCCN)OC(=O)CCCCCCCCCCCCCCC",
+    "transfection_efficiency": 0.72,
+    "toxicity_score": 0.8,
+    "cell_line": "HEPG2"
+  },
+  {
+    "sample_external_id": "LIMS-2026-002",
+    "lipid_smiles": "CCCCCCCCCCCCCCCC(=O)OCC(COP(=O)(O)OCCN)OC(=O)CCCCCCCCCCCCCCC",
+    "transfection_efficiency": 0.65,
+    "toxicity_score": 1.1,
+    "cell_line": "HEPG2"
+  },
+  {
+    "sample_external_id": "LIMS-2026-001",
+    "lipid_smiles": "CC(C)CCCC(C)CCCC(C)CCCC(C)[C@H]1CC[C@@]2([C@H]([C@H](C[C@H]2C1)O)CCC(C)C)C",
+    "transfection_efficiency": 0.55,
+    "toxicity_score": 0.4,
+    "cell_line": "A549"
+  },
+  {
+    "sample_external_id": "LIMS-2026-001",
+    "lipid_smiles": "CCCCCCCCCCCCCCCC(=O)OC[C@H](COP(=O)([O-])OCC[N+](C)(C)C)OC(=O)CCCCCCCCCCCCCCC",
+    "transfection_efficiency": 0.81,
+    "toxicity_score": 0.6,
+    "cell_line": "HEPG2"
+  },
+  {
+    "sample_external_id": "LIMS-2026-002",
+    "lipid_smiles": "CCCCCCCCCCCCCCCC(=O)OCCOCCOCCOCCOCCOCCOCCOCCOCCO",
+    "transfection_efficiency": 0.48,
+    "toxicity_score": 0.3,
+    "cell_line": "HEPG2"
+  }
+]

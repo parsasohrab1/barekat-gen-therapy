@@ -1,0 +1,38 @@
+[
+  {
+    "name": "DLin-MC3-DMA",
+    "smiles": "CCCCCCCCCCCCCCCC(=O)OC[C@H](COP(=O)(O)OCCN)OC(=O)CCCCCCCCCCCCCCC",
+    "lipid_class": "ionizable",
+    "source": "literature"
+  },
+  {
+    "name": "ALC-0315",
+    "smiles": "CCCCCCCCCCCCCCCC(=O)OCC(COP(=O)(O)OCCN)OC(=O)CCCCCCCCCCCCCCC",
+    "lipid_class": "ionizable",
+    "source": "literature"
+  },
+  {
+    "name": "DSPC",
+    "smiles": "CCCCCCCCCCCCCCCC(=O)OC[C@H](COP(=O)([O-])OCC[N+](C)(C)C)OC(=O)CCCCCCCCCCCCCCC",
+    "lipid_class": "helper",
+    "source": "literature"
+  },
+  {
+    "name": "Cholesterol",
+    "smiles": "CC(C)CCCC(C)CCCC(C)CCCC(C)[C@H]1CC[C@@]2([C@H]([C@H](C[C@H]2C1)O)CCC(C)C)C",
+    "lipid_class": "sterol",
+    "source": "literature"
+  },
+  {
+    "name": "DMG-PEG2000",
+    "smiles": "CCCCCCCCCCCCCCCC(=O)OCCOCCOCCOCCOCCOCCOCCOCCOCCO",
+    "lipid_class": "peg",
+    "source": "literature"
+  },
+  {
+    "name": "Invalid-Test",
+    "smiles": "XYZ_NOT_A_MOLECULE",
+    "lipid_class": "ionizable",
+    "source": "test"
+  }
+]

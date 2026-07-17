@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# Node
+node_modules/
+dist/
+build/
+*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Data & artifacts
+data/seeds/*.csv
+data/seeds/*.parquet
+*.pkl
+*.pt
+*.onnx
+mlruns/
+
+# Infra
+infra/terraform/.terraform/
+*.tfstate
+*.tfstate.*
+
+# Logs
+*.log
+vite.out.log
+vite.err.log
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,210 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: barekat-gen-therapy
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: barekat-secrets
+  namespace: barekat-gen-therapy
+type: Opaque
+stringData:
+  database-url: postgresql+psycopg://barekat:barekat@postgres:5432/barekat_gen_therapy
+  redis-url: redis://redis:6379/0
+  minio-access-key: barekat
+  minio-secret-key: barekat_minio
+  api-secret-key: change-me-in-production
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: barekat-config
+  namespace: barekat-gen-therapy
+data:
+  MINIO_ENDPOINT: minio:9000
+  MINIO_BUCKET: barekat-artifacts
+  MINIO_SECURE: "false"
+  CORS_ORIGINS: http://localhost:5173
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: barekat-api
+  namespace: barekat-gen-therapy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: barekat-api
+  template:
+    metadata:
+      labels:
+        app: barekat-api
+    spec:
+      containers:
+        - name: api
+          image: barekat-gen-therapy-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: barekat-config
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: barekat-secrets
+                  key: database-url
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: barekat-secrets
+                  key: redis-url
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: barekat-secrets
+                  key: minio-access-key
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: barekat-secrets
+                  key: minio-secret-key
+            - name: API_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: barekat-secrets
+                  key: api-secret-key
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: barekat-api
+  namespace: barekat-gen-therapy
+spec:
+  selector:
+    app: barekat-api
+  ports:
+    - port: 80
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: barekat-worker
+  namespace: barekat-gen-therapy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: barekat-worker
+  template:
+    metadata:
+      labels:
+        app: barekat-worker
+    spec:
+      containers:
+        - name: worker
+          image: barekat-gen-therapy-api:latest
+          imagePullPolicy: IfNotPresent
+          command: ["celery", "-A", "workers.celery_app", "worker", "--loglevel=info"]
+          envFrom:
+            - configMapRef:
+                name: barekat-config
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: barekat-secrets
+                  key: database-url
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: barekat-secrets
+                  key: redis-url
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: barekat-secrets
+                  key: minio-access-key
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: barekat-secrets
+                  key: minio-secret-key
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: barekat-frontend
+  namespace: barekat-gen-therapy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: barekat-frontend
+  template:
+    metadata:
+      labels:
+        app: barekat-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: barekat-gen-therapy-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: barekat-frontend
+  namespace: barekat-gen-therapy
+spec:
+  selector:
+    app: barekat-frontend
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: barekat-ingress
+  namespace: barekat-gen-therapy
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: barekat.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: barekat-api
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: barekat-frontend
+                port:
+                  number: 80
