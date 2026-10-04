@@ -57,15 +57,15 @@ export default function CompliancePage() {
 
   return (
     <section>
-      <h2>انطباق و ممیزی</h2>
-      <p>HIPAA/GDPR pseudonymization، حق فراموشی، ردیابی GMP، و audit trail مطابق 21 CFR Part 11</p>
+      <h2>Compliance and Audit</h2>
+      <p>HIPAA/GDPR pseudonymization, right to be forgotten, GMP tracing, and audit trail per 21 CFR Part 11</p>
       <p style={{ fontSize: "0.85rem", color: "#92400e" }}>
-        عملیات حساس (حذف / audit) نیاز به نقش admin دارد — با <code>admin / admin123</code> وارد شوید.
+        Sensitive operations (delete / audit) require the admin role — log in with <code>admin / admin123</code>.
       </p>
 
       <div style={{ display: "grid", gap: "1.25rem", marginTop: "1.25rem" }}>
         <fieldset style={{ border: "1px solid #e2e8f0", borderRadius: 8, padding: "1rem" }}>
-          <legend>حریم خصوصی بیمار</legend>
+          <legend>Patient privacy</legend>
           <label>
             Patient ID
             <input
@@ -80,7 +80,7 @@ export default function CompliancePage() {
             </button>
             <button
               onClick={() => {
-                if (confirm("حذف GDPR غیرقابل بازگشت است. ادامه؟")) erase.mutate();
+                if (confirm("GDPR deletion is irreversible. Continue?")) erase.mutate();
               }}
               disabled={erase.isPending}
               style={{ color: "#b91c1c" }}
@@ -91,7 +91,7 @@ export default function CompliancePage() {
         </fieldset>
 
         <fieldset style={{ border: "1px solid #e2e8f0", borderRadius: 8, padding: "1rem" }}>
-          <legend>ردیابی GMP</legend>
+          <legend>GMP tracing</legend>
           <label>
             Batch ID
             <input
@@ -118,10 +118,10 @@ export default function CompliancePage() {
           </label>
           <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem" }}>
             <button onClick={() => gmpRecord.mutate()} disabled={gmpRecord.isPending}>
-              ثبت مرحله GMP
+              Record GMP step
             </button>
             <button onClick={() => gmpTrace.mutate()} disabled={gmpTrace.isPending}>
-              مشاهده Trace
+              View Trace
             </button>
           </div>
         </fieldset>
@@ -134,15 +134,15 @@ export default function CompliancePage() {
       )}
 
       <h3 style={{ marginTop: "1.5rem" }}>Audit Trail</h3>
-      {auditQuery.isError && <p style={{ color: "crimson" }}>دسترسی audit فقط برای admin</p>}
-      {auditQuery.data && auditQuery.data.length === 0 && <p>هنوز رویدادی ثبت نشده.</p>}
+      {auditQuery.isError && <p style={{ color: "crimson" }}>Audit access is for admin only</p>}
+      {auditQuery.data && auditQuery.data.length === 0 && <p>No events recorded yet.</p>}
       {auditQuery.data && auditQuery.data.length > 0 && (
         <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "0.5rem", fontSize: "0.9rem" }}>
           <thead>
             <tr style={{ borderBottom: "2px solid #ddd", textAlign: "right" }}>
-              <th style={{ padding: 8 }}>زمان</th>
-              <th style={{ padding: 8 }}>عمل</th>
-              <th style={{ padding: 8 }}>مدل</th>
+              <th style={{ padding: 8 }}>Time</th>
+              <th style={{ padding: 8 }}>Action</th>
+              <th style={{ padding: 8 }}>Model</th>
             </tr>
           </thead>
           <tbody>

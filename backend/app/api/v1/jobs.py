@@ -32,7 +32,7 @@ def list_jobs(
     db: Session = Depends(get_db),
     _: CurrentUser = Depends(require_role(Role.VIEWER)),
 ):
-    """لیست jobها — برای داشبورد."""
+    """List jobs — for the dashboard."""
     jobs = job_service.list_jobs(db, job_type=job_type)
     return [_to_response(j) for j in jobs]
 

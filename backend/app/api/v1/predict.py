@@ -16,7 +16,7 @@ def predict_outcome(
     db: Session = Depends(get_db),
     user: CurrentUser = Depends(require_role(Role.CLINICIAN)),
 ):
-    """پیش‌بینی پیامد بالینی — با audit log و مدل CoxPH فعال."""
+    """Predict clinical outcome — with audit log and the active CoxPH model."""
     try:
         return predict_service.predict_outcome(db, payload, user=user)
     except ValueError as exc:

@@ -18,23 +18,23 @@ export default function JobsPage() {
   return (
     <section>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h2>وضعیت Jobها</h2>
-        <button onClick={() => refetch()}>بروزرسانی</button>
+        <h2>Jobs Status</h2>
+        <button onClick={() => refetch()}>Refresh</button>
       </div>
 
-      {isLoading && <p>در حال بارگذاری...</p>}
+      {isLoading && <p>Loading...</p>}
       {isError && <p style={{ color: "crimson" }}>{(error as Error).message}</p>}
 
-      {jobs && jobs.length === 0 && <p>هنوز jobی ثبت نشده است.</p>}
+      {jobs && jobs.length === 0 && <p>No jobs recorded yet.</p>}
 
       {jobs && jobs.length > 0 && (
         <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
           <thead>
             <tr style={{ textAlign: "right", borderBottom: "2px solid #ddd" }}>
-              <th style={{ padding: "8px" }}>نوع</th>
-              <th style={{ padding: "8px" }}>وضعیت</th>
-              <th style={{ padding: "8px" }}>ایجاد</th>
-              <th style={{ padding: "8px" }}>جزئیات</th>
+              <th style={{ padding: "8px" }}>Type</th>
+              <th style={{ padding: "8px" }}>Status</th>
+              <th style={{ padding: "8px" }}>Created</th>
+              <th style={{ padding: "8px" }}>Details</th>
             </tr>
           </thead>
           <tbody>
@@ -52,8 +52,8 @@ export default function JobsPage() {
                       {job.job_type === "synthetic" && job.result.c_index != null
                         ? `C-index: ${Number(job.result.c_index).toFixed(3)}`
                         : job.job_type === "design"
-                          ? `${(job.result.candidates as unknown[])?.length ?? 0} کاندیدا`
-                          : "تکمیل شد"}
+                          ? `${(job.result.candidates as unknown[])?.length ?? 0} candidates`
+                          : "Completed"}
                     </span>
                   )}
                 </td>

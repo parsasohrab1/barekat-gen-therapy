@@ -31,8 +31,8 @@ export default function SyntheticPage() {
 
   return (
     <section>
-      <h2>تولید داده سنتتیک (CK4Gen)</h2>
-      <p>CoxPH → Hazard Ratios → خوشه‌بندی ریسک → SynthNet → اعتبارسنجی KS/C-index</p>
+      <h2>Synthetic Data Generation (CK4Gen)</h2>
+      <p>CoxPH → Hazard Ratios → risk clustering → SynthNet → KS/C-index validation</p>
 
       <form
         onSubmit={(e) => {
@@ -42,11 +42,11 @@ export default function SyntheticPage() {
         style={{ display: "grid", gap: "0.75rem", maxWidth: "360px", marginTop: "1rem" }}
       >
         <label>
-          تعداد بیماران
+          Number of patients
           <input type="number" value={nPatients} min={10} max={10000} onChange={(e) => setNPatients(Number(e.target.value))} style={{ display: "block", width: "100%", marginTop: "4px" }} />
         </label>
         <label>
-          تعداد خوشه‌های ریسک
+          Number of risk clusters
           <input type="number" value={nClusters} min={2} max={20} onChange={(e) => setNClusters(Number(e.target.value))} style={{ display: "block", width: "100%", marginTop: "4px" }} />
         </label>
         <label>
@@ -54,30 +54,30 @@ export default function SyntheticPage() {
           <input type="number" value={seed} onChange={(e) => setSeed(Number(e.target.value))} style={{ display: "block", width: "100%", marginTop: "4px" }} />
         </label>
         <label>
-          <input type="checkbox" checked={useCk4gen} onChange={(e) => setUseCk4gen(e.target.checked)} /> استفاده از خط لوله CK4Gen
+          <input type="checkbox" checked={useCk4gen} onChange={(e) => setUseCk4gen(e.target.checked)} /> Use the CK4Gen pipeline
         </label>
         <button type="submit" disabled={mutation.isPending}>
-          {mutation.isPending ? "در حال ارسال..." : "شروع تولید"}
+          {mutation.isPending ? "Sending..." : "Start generation"}
         </button>
       </form>
 
       {jobId && (
         <div style={{ marginTop: "1.5rem" }}>
           <p>
-            <strong>Job:</strong> {jobId} — <strong>وضعیت:</strong> {job?.status ?? "..."}
+            <strong>Job:</strong> {jobId} — <strong>Status:</strong> {job?.status ?? "..."}
           </p>
           {error && <p style={{ color: "crimson" }}>{error}</p>}
           {job?.status === "completed" && job.result && (
             <div style={{ marginTop: "1rem" }}>
               <ul>
                 <li>Pipeline: {String(job.result.pipeline ?? "ck4gen")}</li>
-                <li>نمونه‌ها: {String(job.result.n_samples)}</li>
+                <li>Samples: {String(job.result.n_samples)}</li>
                 <li>C-index: {Number(job.result.c_index).toFixed(3)}</li>
                 {validation && (
                   <>
                     <li>KS p-value: {Number(validation.ks_pvalue).toFixed(4)}</li>
                     <li>C-index gap: {Number(validation.c_index_gap).toFixed(3)}</li>
-                    <li>پذیرش: {validation.accepted ? "✓ قبول" : "⚠ نیاز به بازتولید"}</li>
+                    <li>Acceptance: {validation.accepted ? "✓ Accepted" : "⚠ Regeneration needed"}</li>
                   </>
                 )}
               </ul>

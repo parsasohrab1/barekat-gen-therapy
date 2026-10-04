@@ -13,7 +13,7 @@ synthetic_service = SyntheticDataService()
 
 @celery_app.task(name="synthetic.generate", bind=True)
 def run_synthetic_generation(self, job_id: str, params: dict) -> dict:
-    """تولید dataset سنتتیک CK4Gen، ذخیره در MinIO، آموزش CoxPH."""
+    """Generate the CK4Gen synthetic dataset, store it in MinIO, train CoxPH."""
     db = SessionLocal()
     try:
         job = job_service.get(db, uuid.UUID(job_id))

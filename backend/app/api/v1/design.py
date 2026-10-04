@@ -22,7 +22,7 @@ def create_design_job(
     db: Session = Depends(get_db),
     _: CurrentUser = Depends(require_role(Role.SCIENTIST)),
 ):
-    """ایجاد job طراحی لیپید — اجرای ناهمزمان."""
+    """Create a lipid design job — asynchronous execution."""
     job = job_service.create(db, job_type="design", input_payload=payload.model_dump(mode="json"))
     task = run_design_job.delay(str(job.id), payload.model_dump(mode="json"))
     job.celery_task_id = task.id
@@ -58,7 +58,7 @@ def rank_design_candidates(
     db: Session = Depends(get_db),
     _: CurrentUser = Depends(require_role(Role.SCIENTIST)),
 ):
-    """رتبه‌بندی مجدد کاندیداها با وزن‌های قابل تنظیم."""
+    """Re-rank candidates with adjustable weights."""
     job = job_service.get(db, job_id)
     if job is None or job.job_type != "design":
         raise HTTPException(status_code=404, detail="Design job not found")

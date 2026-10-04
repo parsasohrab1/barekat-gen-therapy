@@ -28,7 +28,7 @@ def generate_synthetic_data(
     db: Session = Depends(get_db),
     _: CurrentUser = Depends(require_role(Role.SCIENTIST)),
 ):
-    """شروع job تولید dataset سنتتیک + آموزش CoxPH."""
+    """Start a synthetic dataset generation + CoxPH training job."""
     job = job_service.create(db, job_type="synthetic", input_payload=payload.model_dump())
     task = run_synthetic_generation.delay(str(job.id), payload.model_dump())
     job.celery_task_id = task.id

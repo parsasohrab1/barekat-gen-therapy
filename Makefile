@@ -1,15 +1,15 @@
 .PHONY: help install dev up down logs migrate seed seed-users seed-invitro test lint ci
 
 help:
-	@echo "Barekat Gen Therapy — دستورات توسعه"
+	@echo "Barekat Gen Therapy — development commands"
 	@echo ""
-	@echo "  make install       نصب وابستگی‌ها"
-	@echo "  make up            استک Docker"
-	@echo "  make down          توقف"
+	@echo "  make install       install dependencies"
+	@echo "  make up            Docker stack"
+	@echo "  make down          stop"
 	@echo "  make migrate       alembic upgrade"
-	@echo "  make seed          داده اولیه"
-	@echo "  make seed-users    کاربران staging"
-	@echo "  make seed-invitro  داده برون‌تنی دمو"
+	@echo "  make seed          initial data"
+	@echo "  make seed-users    staging users"
+	@echo "  make seed-invitro  demo in-vitro data"
 	@echo "  make test          pytest"
 	@echo "  make lint          ruff"
 

@@ -27,10 +27,10 @@ export default function PredictPage() {
 
   return (
     <section>
-      <h2>پیش‌بینی پیامد درمان</h2>
+      <h2>Treatment Outcome Prediction</h2>
       <p>
-        مدل فعال:{" "}
-        {activeModel ? `CoxPH v${activeModel.version}` : "هنوز آموزش داده نشده — ابتدا داده سنتتیک تولید کنید"}
+        Active model:{" "}
+        {activeModel ? `CoxPH v${activeModel.version}` : "Not trained yet — generate synthetic data first"}
       </p>
 
       <form
@@ -41,32 +41,32 @@ export default function PredictPage() {
         style={{ display: "grid", gap: "0.75rem", maxWidth: "320px", marginTop: "1rem" }}
       >
         <label>
-          سن
+          Age
           <input type="number" value={age} min={10} max={80} onChange={(e) => setAge(Number(e.target.value))} style={{ display: "block", width: "100%", marginTop: "4px" }} />
         </label>
         <label>
-          جنسیت
+          Sex
           <select value={gender} onChange={(e) => setGender(e.target.value)} style={{ display: "block", width: "100%", marginTop: "4px" }}>
-            <option value="Male">مرد</option>
-            <option value="Female">زن</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
           </select>
         </label>
         <label>
-          شدت بیماری (۱–۱۰)
+          Disease severity (1–10)
           <input type="number" value={severity} min={1} max={10} step={0.1} onChange={(e) => setSeverity(Number(e.target.value))} style={{ display: "block", width: "100%", marginTop: "4px" }} />
         </label>
         <label>
-          <input type="checkbox" checked={gene5} onChange={(e) => setGene5(e.target.checked)} /> جهش Gene_5
+          <input type="checkbox" checked={gene5} onChange={(e) => setGene5(e.target.checked)} /> Gene_5 mutation
         </label>
         <label>
-          <input type="checkbox" checked={gene12} onChange={(e) => setGene12(e.target.checked)} /> جهش Gene_12
+          <input type="checkbox" checked={gene12} onChange={(e) => setGene12(e.target.checked)} /> Gene_12 mutation
         </label>
         <label>
-          بیان Gene_18
+          Gene_18 expression
           <input type="number" value={gene18Expr} min={0} max={15} step={0.1} onChange={(e) => setGene18Expr(Number(e.target.value))} style={{ display: "block", width: "100%", marginTop: "4px" }} />
         </label>
         <button type="submit" disabled={mutation.isPending || !activeModel}>
-          پیش‌بینی
+          Predict
         </button>
       </form>
 
@@ -75,16 +75,16 @@ export default function PredictPage() {
       {mutation.data && (
         <div style={{ marginTop: "1.5rem", padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
           <p style={{ fontSize: "0.85rem", color: "#92400e", marginTop: 0 }}>
-            ⚠ پیش‌بینی تحقیقاتی — نه برای تشخیص بالینی
+            ⚠ Research prediction — not for clinical diagnosis
             {mutation.data.is_research_prediction && " (is_research_prediction=true)"}
           </p>
-          <h3>نتیجه پیش‌بینی</h3>
+          <h3>Prediction result</h3>
           <ul>
-            <li>زمان تا بهبودی (میانه): {mutation.data.time_to_recovery_days} روز</li>
-            <li>احتمال رویداد (۱۸۰ روز): {(mutation.data.event_probability * 100).toFixed(1)}%</li>
-            <li>سطح سمیت: {mutation.data.toxicity_level}</li>
+            <li>Time to recovery (median): {mutation.data.time_to_recovery_days} days</li>
+            <li>Event probability (180 days): {(mutation.data.event_probability * 100).toFixed(1)}%</li>
+            <li>Toxicity level: {mutation.data.toxicity_level}</li>
             <li>Partial hazard: {mutation.data.partial_hazard}</li>
-            <li>مدل: v{mutation.data.model_version}</li>
+            <li>Model: v{mutation.data.model_version}</li>
           </ul>
         </div>
       )}

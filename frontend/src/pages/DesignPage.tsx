@@ -39,11 +39,11 @@ export default function DesignPage() {
 
   return (
     <section>
-      <h2>طراحی و رتبه‌بندی لیپید</h2>
-      <p>فیلتر RDKit (SMILES، logP، MW) + رتبه‌بندی چندمعیاره + حذف تکراری با Qdrant</p>
+      <h2>Lipid Design and Ranking</h2>
+      <p>RDKit filter (SMILES, logP, MW) + multi-criteria ranking + duplicate removal with Qdrant</p>
 
       <button onClick={() => startMutation.mutate()} disabled={startMutation.isPending} style={{ marginTop: "1rem" }}>
-        {startMutation.isPending ? "در حال شروع..." : "شروع job طراحی"}
+        {startMutation.isPending ? "Starting..." : "Start design job"}
       </button>
       {startMutation.error && <p style={{ color: "crimson" }}>{startMutation.error.message}</p>}
 
@@ -52,7 +52,7 @@ export default function DesignPage() {
           Job: <code>{jobId}</code>
           {job && (
             <span style={{ marginRight: "0.75rem" }}>
-              — وضعیت: <strong>{job.status}</strong>
+              — Status: <strong>{job.status}</strong>
             </span>
           )}
         </p>
@@ -63,7 +63,7 @@ export default function DesignPage() {
       )}
 
       <div style={{ marginTop: "1.5rem", display: "grid", gap: "0.5rem", maxWidth: "360px" }}>
-        <h3>وزن‌های رتبه‌بندی</h3>
+        <h3>Ranking weights</h3>
         {(["efficacy", "safety", "synthesizability", "cost"] as const).map((key) => (
           <label key={key}>
             {key}: {weights[key].toFixed(2)}
@@ -82,7 +82,7 @@ export default function DesignPage() {
           onClick={() => rankMutation.mutate()}
           disabled={!jobId || job?.status !== "completed" || rankMutation.isPending}
         >
-          {rankMutation.isPending ? "رتبه‌بندی..." : "اعمال رتبه‌بندی"}
+          {rankMutation.isPending ? "Ranking..." : "Apply ranking"}
         </button>
         {rankMutation.error && <p style={{ color: "crimson" }}>{rankMutation.error.message}</p>}
       </div>
@@ -91,13 +91,13 @@ export default function DesignPage() {
         <table style={{ width: "100%", marginTop: "1.5rem", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "2px solid #ddd", textAlign: "right" }}>
-              <th style={{ padding: 8 }}>رتبه</th>
-              <th style={{ padding: 8 }}>نام</th>
-              <th style={{ padding: 8 }}>امتیاز نهایی</th>
+              <th style={{ padding: 8 }}>Rank</th>
+              <th style={{ padding: 8 }}>Name</th>
+              <th style={{ padding: 8 }}>Final score</th>
               <th style={{ padding: 8 }}>logP</th>
               <th style={{ padding: 8 }}>MW</th>
-              <th style={{ padding: 8 }}>قابل سنتز</th>
-              <th style={{ padding: 8 }}>تکراری</th>
+              <th style={{ padding: 8 }}>Synthesizable</th>
+              <th style={{ padding: 8 }}>Duplicate</th>
             </tr>
           </thead>
           <tbody>
@@ -113,7 +113,7 @@ export default function DesignPage() {
                   {c.molecular_weight != null ? Number(c.molecular_weight).toFixed(0) : "—"}
                 </td>
                 <td style={{ padding: 8 }}>{c.synthesizable ? "✓" : "✗"}</td>
-                <td style={{ padding: 8 }}>{c.is_duplicate ? "بله" : "خیر"}</td>
+                <td style={{ padding: 8 }}>{c.is_duplicate ? "Yes" : "No"}</td>
               </tr>
             ))}
           </tbody>

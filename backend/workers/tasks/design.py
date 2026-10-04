@@ -12,7 +12,7 @@ ranking_service = RankingService()
 
 @celery_app.task(name="design.run_job", bind=True)
 def run_design_job(self, job_id: str, payload: dict) -> dict:
-    """اجرای job طراحی لیپید با فیلتر RDKit و امتیازدهی اولیه."""
+    """Run the lipid design job with RDKit filtering and initial scoring."""
     db = SessionLocal()
     try:
         job = job_service.get(db, uuid.UUID(job_id))

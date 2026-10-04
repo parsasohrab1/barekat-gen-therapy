@@ -11,12 +11,12 @@ import SyntheticPage from "./SyntheticPage";
 type Page = "synthetic" | "predict" | "design" | "lab" | "compliance" | "jobs";
 
 const NAV: { id: Page; label: string }[] = [
-  { id: "synthetic", label: "داده سنتتیک" },
-  { id: "predict", label: "پیش‌بینی پیامد" },
-  { id: "design", label: "طراحی لیپید" },
-  { id: "lab", label: "آزمایشگاه" },
-  { id: "compliance", label: "انطباق" },
-  { id: "jobs", label: "Jobها" },
+  { id: "synthetic", label: "Synthetic data" },
+  { id: "predict", label: "Outcome prediction" },
+  { id: "design", label: "Lipid design" },
+  { id: "lab", label: "Laboratory" },
+  { id: "compliance", label: "Compliance" },
+  { id: "jobs", label: "Jobs" },
 ];
 
 const DEMO_USERS = [
@@ -61,7 +61,7 @@ export default function App() {
           <div>
             <h1 style={{ margin: 0, fontSize: "1.4rem" }}>Barekat Gen Therapy</h1>
             <p style={{ margin: "0.25rem 0 0", opacity: 0.8, fontSize: "0.9rem" }}>
-              پلتفرم طراحی و بهینه‌سازی ناقل‌های ژنی
+              Platform for designing and optimizing gene vectors
               {health && (
                 <span style={{ marginRight: "1rem" }}>
                   — API: {healthOk ? "✓" : "⚠"} {health.status} v{health.version}
@@ -108,7 +108,7 @@ export default function App() {
                 style={{ padding: "4px 8px" }}
               />
               <button type="submit" disabled={loginMutation.isPending}>
-                ورود
+                Log in
               </button>
               {loginMutation.isError && (
                 <span style={{ color: "#fca5a5", fontSize: "0.85rem" }}>{loginMutation.error.message}</span>
@@ -117,14 +117,14 @@ export default function App() {
           ) : (
             <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
               <span style={{ fontSize: "0.85rem", opacity: 0.85 }}>{role}</span>
-              <button onClick={logout}>خروج</button>
+              <button onClick={logout}>Log out</button>
             </div>
           )}
         </div>
       </header>
 
       <div style={{ background: "#fef3c7", color: "#92400e", padding: "0.5rem 2rem", fontSize: "0.85rem" }}>
-        ⚠ داده‌های سنتتیک (<code>is_synthetic=true</code>) از داده واقعی بیمار جدا هستند. پیش‌بینی‌ها صرفاً برای تحقیق هستند.
+        ⚠ Synthetic data (<code>is_synthetic=true</code>) is separate from real patient data. Predictions are for research only.
       </div>
 
       <nav style={{ display: "flex", gap: "0.5rem", padding: "1rem 2rem", background: "#fff", borderBottom: "1px solid #e2e8f0", flexWrap: "wrap" }}>

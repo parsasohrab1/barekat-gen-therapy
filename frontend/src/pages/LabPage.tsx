@@ -50,14 +50,14 @@ export default function LabPage() {
 
   return (
     <section>
-      <h2>یکپارچه‌سازی آزمایشگاه</h2>
-      <p>حلقه بسته: طراحی → سنتز (MQTT) → in-vitro → retrain → پیش‌بینی</p>
+      <h2>Laboratory Integration</h2>
+      <p>Closed loop: design → synthesis (MQTT) → in-vitro → retrain → prediction</p>
       <p style={{ fontSize: "0.85rem", color: "#64748b" }}>
-        Sync LIMS از <code>LIMS_BASE_URL</code> می‌خواند؛ در صورت خطا از دمو mock استفاده می‌شود.
+        Sync LIMS reads from <code>LIMS_BASE_URL</code>; on error the mock demo is used.
       </p>
 
       <label style={{ display: "block", marginTop: "1rem", maxWidth: 560 }}>
-        SMILES مرجع
+        Reference SMILES
         <input
           value={smiles}
           onChange={(e) => setSmiles(e.target.value)}
@@ -70,24 +70,24 @@ export default function LabPage() {
           Sync LIMS
         </button>
         <button onClick={() => dispatchSynth.mutate()} disabled={dispatchSynth.isPending}>
-          ارسال به ربات سنتز (MQTT)
+          Send to synthesis robot (MQTT)
         </button>
         <button onClick={() => importDemo.mutate()} disabled={importDemo.isPending}>
-          Import نتایج in-vitro (دمو)
+          Import in-vitro results (demo)
         </button>
         <button onClick={() => retrain.mutate()} disabled={retrain.isPending}>
-          Retrain از داده برون‌تنی
+          Retrain from in-vitro data
         </button>
         <button onClick={() => seedLibrary.mutate()} disabled={seedLibrary.isPending}>
-          Index کتابخانه لیپید (Qdrant)
+          Index lipid library (Qdrant)
         </button>
         <button onClick={() => search.mutate()} disabled={search.isPending}>
-          جستجوی مشابه SMILES
+          Search similar SMILES
         </button>
       </div>
 
       <ResultBox title="LIMS" data={syncLimsMutation.data} error={syncLimsMutation.error} />
-      <ResultBox title="سنتز" data={dispatchSynth.data} error={dispatchSynth.error} />
+      <ResultBox title="Synthesis" data={dispatchSynth.data} error={dispatchSynth.error} />
       <ResultBox title="Import" data={importDemo.data} error={importDemo.error} />
       <ResultBox title="Retrain" data={retrain.data} error={retrain.error} />
       <ResultBox title="Seed library" data={seedLibrary.data} error={seedLibrary.error} />

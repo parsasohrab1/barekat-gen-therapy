@@ -5,15 +5,15 @@ from scipy.stats import weibull_min
 
 def generate_gene_therapy_data(n_patients: int = 300, n_genes: int = 25, seed: int = 42) -> pd.DataFrame:
     """
-    تولید داده‌های سنتتیک برای کارآزمایی ژن درمانی.
+    Generate synthetic data for a gene therapy clinical trial.
 
-    پارامترها:
-        n_patients: تعداد بیماران
-        n_genes: تعداد ژن‌های هدف
-        seed: seed تصادفی برای تکرارپذیری
+    Parameters:
+        n_patients: number of patients
+        n_genes: number of target genes
+        seed: random seed for reproducibility
 
-    بازگشت:
-        دیتافریم با داده‌های پاسخ به ژن درمانی
+    Returns:
+        DataFrame with gene therapy response data
     """
     np.random.seed(seed)
 
@@ -79,9 +79,9 @@ def generate_gene_therapy_data(n_patients: int = 300, n_genes: int = 25, seed: i
 if __name__ == "__main__":
     gene_therapy_data = generate_gene_therapy_data(n_patients=500)
 
-    print(f"تعداد بیماران: {len(gene_therapy_data)}")
-    print("\nآمار پاسخ به درمان:")
+    print(f"Number of patients: {len(gene_therapy_data)}")
+    print("\nTreatment response statistics:")
     print(gene_therapy_data["Treatment_Response"].value_counts())
-    print(f"\nمتوسط زمان بهبودی: {gene_therapy_data['Time_to_Recovery_days'].mean():.1f} روز")
-    print("\nنمونه داده:")
+    print(f"\nAverage recovery time: {gene_therapy_data['Time_to_Recovery_days'].mean():.1f} days")
+    print("\nSample data:")
     print(gene_therapy_data.head())

@@ -1,66 +1,66 @@
-# معماری محصول — Barekat Gen Therapy
+# Product Architecture — Barekat Gen Therapy
 
-> پلتفرم محاسباتی برای طراحی و بهینه‌سازی ناقل‌های ژنی (LNP) با هوش مصنوعی
-
----
-
-## فهرست مطالب
-
-1. [نمای کلی](#۱-نمای-کلی)
-2. [اهداف و محدوده](#۲-اهداف-و-محدوده)
-3. [معماری لایه‌ای](#۳-معماری-لایه‌ای)
-4. [اجزای اصلی سیستم](#۴-اجزای-اصلی-سیستم)
-5. [مدل دامنه](#۵-مدل-دامنه)
-6. [جریان داده](#۶-جریان-داده)
-7. [خط لوله یادگیری ماشین](#۷-خط-لوله-یادگیری-ماشین)
-8. [طراحی API](#۸-طراحی-api)
-9. [پایگاه داده و ذخیره‌سازی](#۹-پایگاه-داده-و-ذخیره‌سازی)
-10. [یکپارچه‌سازی آزمایشگاه](#۱۰-یکپارچه‌سازی-آزمایشگاه)
-11. [امنیت و انطباق](#۱۱-امنیت-و-انطباق)
-12. [زیرساخت و استقرار](#۱۲-زیرساخت-و-استقرار)
-13. [ساختار پوشه‌های پیشنهادی](#۱۳-ساختار-پوشه‌های-پیشنهادی)
-14. [نقشه راه پیاده‌سازی](#۱۴-نقشه-راه-پیاده‌سازی)
+> A computational platform for AI-based design and optimization of gene vectors (LNP)
 
 ---
 
-## ۱. نمای کلی
+## Table of Contents
 
-Barekat Gen Therapy یک پلتفرم **AI-native** است که چرخه کامل «طراحی → پیش‌بینی → رتبه‌بندی → سنتز → اعتبارسنجی» ناقل‌های ژنی را پوشش می‌دهد. محصول بر دو محور اصلی استوار است:
+1. [Overview](#1-overview)
+2. [Goals and Scope](#2-goals-and-scope)
+3. [Layered Architecture](#3-layered-architecture)
+4. [Main System Components](#4-main-system-components)
+5. [Domain Model](#5-domain-model)
+6. [Data Flow](#6-data-flow)
+7. [Machine Learning Pipeline](#7-machine-learning-pipeline)
+8. [API Design](#8-api-design)
+9. [Database and Storage](#9-database-and-storage)
+10. [Laboratory Integration](#10-laboratory-integration)
+11. [Security and Compliance](#11-security-and-compliance)
+12. [Infrastructure and Deployment](#12-infrastructure-and-deployment)
+13. [Proposed Folder Structure](#13-proposed-folder-structure)
+14. [Implementation Roadmap](#14-implementation-roadmap)
 
-| محور | توضیح |
+---
+
+## 1. Overview
+
+Barekat Gen Therapy is an **AI-native** platform that covers the full "design → prediction → ranking → synthesis → validation" cycle of gene vectors. The product rests on two main axes:
+
+| Axis | Description |
 |------|-------|
-| **طراحی ناقل (Carrier Design)** | تولید و بهینه‌سازی ساختار شیمیایی لیپیدها و فرمولاسیون LNP با مدل‌های مولد |
-| **پیش‌بینی بالینی (Clinical Outcome)** | مدل‌سازی پاسخ درمانی، سمیت و ایمنی با رویکرد CK4Gen/CoxPH و داده‌های سنتتیک |
+| **Carrier Design** | Generating and optimizing the chemical structure of lipids and LNP formulations with generative models |
+| **Clinical Outcome** | Modeling therapeutic response, toxicity and safety with the CK4Gen/CoxPH approach and synthetic data |
 
 ```mermaid
 graph TB
-    subgraph Users["کاربران"]
-        Scientist[محقق / شیمی‌دان]
-        Clinician[پزشک / متخصص بالینی]
-        LabTech[اپراتور آزمایشگاه]
+    subgraph Users["Users"]
+        Scientist[Researcher / Chemist]
+        Clinician[Physician / Clinical specialist]
+        LabTech[Lab operator]
     end
 
     subgraph Platform["Barekat Gen Therapy Platform"]
-        UI[رابط کاربری وب]
+        UI[Web user interface]
         API[API Gateway]
         
-        subgraph Core["هسته محاسباتی"]
+        subgraph Core["Computational Core"]
             LipidGen[Lipid Generator]
             FormOpt[Formulation Optimizer]
             OutcomePred[Outcome Predictor]
             SynthData[Synthetic Data Engine]
         end
         
-        subgraph Data["لایه داده"]
-            ChemDB[(پایگاه شیمیایی)]
-            ClinDB[(پایگاه بالینی)]
-            ModelRegistry[(رجیستری مدل)]
+        subgraph Data["Data Layer"]
+            ChemDB[(Chemical database)]
+            ClinDB[(Clinical database)]
+            ModelRegistry[(Model registry)]
         end
     end
 
-    subgraph External["سیستم‌های خارجی"]
+    subgraph External["External Systems"]
         PubChem[PubChem / ChEMBL]
-        LabRobot[ربات آزمایشگاه]
+        LabRobot[Lab robot]
         LIMS[LIMS]
     end
 
@@ -77,62 +77,62 @@ graph TB
 
 ---
 
-## ۲. اهداف و محدوده
+## 2. Goals and Scope
 
-### اهداف محصول
+### Product Goals
 
-- طراحی کتابخانه‌های وسیع از لیپیدهای نو با ساختار سه‌بعدی بهینه
-- پیش‌بینی کارایی انتقال ژن در بافت‌های مختلف (طحال، سلول‌های سرطانی و ...)
-- رتبه‌بندی کاندیداها برای سنتز و آزمایش
-- پیشنهاد مسیرهای سنتز شیمیایی
-- تولید داده‌های سنتتیک با کیفیت بالا در شرایط کمبود داده واقعی
+- Design extensive libraries of novel lipids with optimal 3D structure
+- Predict gene delivery efficiency in different tissues (spleen, cancer cells, etc.)
+- Rank candidates for synthesis and testing
+- Suggest chemical synthesis routes
+- Generate high-quality synthetic data when real data is scarce
 
-### ورودی‌ها
+### Inputs
 
-| نوع | مثال |
+| Type | Example |
 |-----|------|
-| ساختار شیمیایی | SMILES، InChI، مختصات ۳D |
-| فرمولاسیون | نسبت لیپیدها، pH، غلظت RNA |
-| داده تجربی | کارایی برون‌تنی/درون‌تنی، سمیت |
-| زمینه بالینی | سن، جنسیت، نوع بیماری، وضعیت ایمنی |
-| بافت هدف | نوع سلول، بافت، اندیکاسیون |
+| Chemical structure | SMILES, InChI, 3D coordinates |
+| Formulation | Lipid ratios, pH, RNA concentration |
+| Experimental data | In-vitro/in-vivo efficiency, toxicity |
+| Clinical context | Age, sex, disease type, immune status |
+| Target tissue | Cell type, tissue, indication |
 
-### خروجی‌ها
+### Outputs
 
-| نوع | مثال |
+| Type | Example |
 |-----|------|
-| کاندیداهای لیپیدی | لیست رتبه‌بندی‌شده با امتیاز اطمینان |
-| پیش‌بینی کارایی | احتمال انتقال ژن موفق در هر بافت |
-| مسیر سنتز | گام‌های شیمیایی پیشنهادی |
-| گزارش ایمنی | سطح سمیت، ریسک طوفان سایتوکاین |
-| داده سنتتیک | مجموعه داده برای آموزش مدل‌های بعدی |
+| Lipid candidates | Ranked list with confidence score |
+| Efficacy prediction | Probability of successful gene delivery in each tissue |
+| Synthesis route | Suggested chemical steps |
+| Safety report | Toxicity level, cytokine storm risk |
+| Synthetic data | Dataset for training subsequent models |
 
-### محدودیت‌های کلیدی
+### Key Constraints
 
-- کمیابی داده‌های واقعی ژن‌درمانی
-- نیاز به پیش‌بینی دقیق سمیت و پاسخ ایمنی
-- یکپارچه‌سازی با اتوماسیون آزمایشگاهی
-- انطباق با مقررات حفاظت از داده‌های بیمار (HIPAA/GDPR)
+- Scarcity of real gene therapy data
+- Need for accurate toxicity and immune response prediction
+- Integration with laboratory automation
+- Compliance with patient data protection regulations (HIPAA/GDPR)
 
 ---
 
-## ۳. معماری لایه‌ای
+## 3. Layered Architecture
 
 ```mermaid
 graph LR
-    subgraph L1["لایه ۱ — ارائه"]
+    subgraph L1["Layer 1 — Presentation"]
         Web[Web App]
         CLI[CLI Tools]
         SDK[Python SDK]
     end
 
-    subgraph L2["لایه ۲ — API"]
+    subgraph L2["Layer 2 — API"]
         Gateway[API Gateway]
         Auth[Authentication]
         RateLimit[Rate Limiting]
     end
 
-    subgraph L3["لایه ۳ — سرویس‌های دامنه"]
+    subgraph L3["Layer 3 — Domain Services"]
         DesignSvc[Carrier Design Service]
         PredictSvc[Prediction Service]
         SynthSvc[Synthetic Data Service]
@@ -140,7 +140,7 @@ graph LR
         SynthRouteSvc[Synthesis Route Service]
     end
 
-    subgraph L4["لایه ۴ — ML Engine"]
+    subgraph L4["Layer 4 — ML Engine"]
         GenModel[Generative Models]
         CoxModel[CoxPH / Survival Models]
         SynthNet[SynthNet]
@@ -148,14 +148,14 @@ graph LR
         EmbedModel[Molecular Embeddings]
     end
 
-    subgraph L5["لایه ۵ — داده"]
+    subgraph L5["Layer 5 — Data"]
         PostgreSQL[(PostgreSQL)]
         MinIO[(Object Storage)]
         Redis[(Redis Cache)]
         VectorDB[(Vector DB)]
     end
 
-    subgraph L6["لایه ۶ — زیرساخت"]
+    subgraph L6["Layer 6 — Infrastructure"]
         K8s[Kubernetes]
         GPU[GPU Workers]
         Queue[Task Queue]
@@ -167,97 +167,97 @@ graph LR
     L3 --> L6
 ```
 
-### اصول معماری
+### Architectural Principles
 
-| اصل | توضیح |
+| Principle | Description |
 |-----|-------|
-| **Modular Monolith → Microservices** | شروع با monolith ماژولار؛ جداسازی سرویس‌ها در فاز رشد |
-| **ML as a Service** | مدل‌ها به‌صورت سرویس مستقل با نسخه‌بندی |
-| **Event-Driven Jobs** | وظایف سنگین ML از طریق صف ناهمزمان |
-| **Data Lineage** | ردیابی کامل منشأ هر پیش‌بینی و داده سنتتیک |
-| **Reproducibility** | هر آزمایش ML با seed، نسخه مدل و پارامترها قابل تکرار |
+| **Modular Monolith → Microservices** | Start with a modular monolith; split services in the growth phase |
+| **ML as a Service** | Models as independent, versioned services |
+| **Event-Driven Jobs** | Heavy ML tasks via an asynchronous queue |
+| **Data Lineage** | Complete tracing of the origin of each prediction and synthetic data |
+| **Reproducibility** | Every ML experiment is repeatable by seed, model version and parameters |
 
 ---
 
-## ۴. اجزای اصلی سیستم
+## 4. Main System Components
 
-### ۴.۱ Carrier Design Engine (موتور طراحی ناقل)
+### 4.1 Carrier Design Engine
 
-مسئول تولید و بهینه‌سازی ساختارهای لیپیدی.
+Responsible for generating and optimizing lipid structures.
 
 ```mermaid
 flowchart LR
-    Input[ورودی: محدودیت‌ها و اهداف] --> Encoder[Molecular Encoder]
+    Input[Input: constraints and goals] --> Encoder[Molecular Encoder]
     Encoder --> Generator[Generative Model<br/>GPT / VAE / Diffusion]
-    Generator --> Filter[فیلتر قوانین شیمیایی]
-    Filter --> Dock3D[بهینه‌سازی ساختار ۳D]
-    Dock3D --> Score[امتیازدهی چندمعیاره]
-    Score --> Output[کاندیداهای لیپیدی]
+    Generator --> Filter[Chemical rules filter]
+    Filter --> Dock3D[3D structure optimization]
+    Dock3D --> Score[Multi-criteria scoring]
+    Score --> Output[Lipid candidates]
 ```
 
-**مسئولیت‌ها:**
-- تولید SMILES/InChI جدید در فضای شیمیایی معتبر
-- بهینه‌سازی ساختار سه‌بعدی (RDKit, Open Babel)
-- اعمال قیود فیزیکوشیمیایی (logP، وزن مولکولی، قطبش)
-- یکپارچه‌سازی با پایگاه‌های مرجع (PubChem, ChEMBL)
+**Responsibilities:**
+- Generating new SMILES/InChI in a valid chemical space
+- 3D structure optimization (RDKit, Open Babel)
+- Applying physicochemical constraints (logP, molecular weight, polarity)
+- Integration with reference databases (PubChem, ChEMBL)
 
-### ۴.۲ Formulation Optimizer (بهینه‌ساز فرمولاسیون)
+### 4.2 Formulation Optimizer
 
-| پارامتر | محدوده | هدف |
+| Parameter | Range | Goal |
 |---------|--------|-----|
-| نسبت لیپید کمکی به یونی | ۱۰–۵۰٪ | پایداری LNP |
-| نسبت PEG | ۰.۵–۵٪ | نیمه‌عمر پلاسمایی |
-| N/P ratio | ۲–۸ | کارایی بسته‌بندی RNA |
-| غلظت RNA | ۰.۱–۲ mg/mL | دوز درمانی |
+| Helper-to-ionizable lipid ratio | 10–50% | LNP stability |
+| PEG ratio | 0.5–5% | Plasma half-life |
+| N/P ratio | 2–8 | RNA packaging efficiency |
+| RNA concentration | 0.1–2 mg/mL | Therapeutic dose |
 
-### ۴.۳ Outcome Predictor (پیش‌بینی‌کننده پیامد)
+### 4.3 Outcome Predictor
 
-مدل‌های پیش‌بینی پاسخ درمانی، سمیت و رویدادهای بالینی.
+Models for predicting therapeutic response, toxicity and clinical events.
 
-- **Cox Proportional Hazards (CoxPH):** برازش روی داده واقعی محدود
-- **Deep Survival Models:** DeepSurv, DeepHit برای پیش‌بینی زمان تا رویداد
-- **Toxicity Classifier:** پیش‌بینی سطح سمیت و طوفان سایتوکاین
+- **Cox Proportional Hazards (CoxPH):** fitting on limited real data
+- **Deep Survival Models:** DeepSurv, DeepHit for time-to-event prediction
+- **Toxicity Classifier:** predicting toxicity level and cytokine storm
 
-### ۴.۴ Synthetic Data Engine (موتور داده سنتتیک)
+### 4.4 Synthetic Data Engine
 
-پیاده‌سازی چارچوب CK4Gen برای تولید داده در شرایط کمبود نمونه واقعی.
+Implementation of the CK4Gen framework for generating data when real samples are scarce.
 
 ```mermaid
 flowchart TD
-    RealData[داده واقعی محدود] --> CoxFit[برازش مدل CoxPH]
-    CoxFit --> Distill[تقطیر دانش<br/>Hazard Ratios]
-    Distill --> Cluster[خوشه‌بندی پروفایل ریسک]
+    RealData[Limited real data] --> CoxFit[Fit CoxPH model]
+    CoxFit --> Distill[Knowledge distillation<br/>Hazard Ratios]
+    Distill --> Cluster[Risk profile clustering]
     Cluster --> SynthNet[SynthNet Training]
-    SynthNet --> Validate[اعتبارسنجی توزیع]
-    Validate --> Synthetic[داده سنتتیک]
-    Validate -->|عدم انطباق| SynthNet
+    SynthNet --> Validate[Distribution validation]
+    Validate --> Synthetic[Synthetic data]
+    Validate -->|Mismatch| SynthNet
 ```
 
-**ویژگی‌های کلیدی:**
-- حفظ توزیع زمان تا رویداد (Survival Time)
-- حفظ روابط بین متغیرهای بالینی
-- خوشه‌بندی برای جلوگیری از «محو شدن» پروفایل‌های ریسک
-- اعتبارسنجی آماری (KS-test, C-index)
+**Key features:**
+- Preserving the distribution of time to event (Survival Time)
+- Preserving relationships between clinical variables
+- Clustering to prevent "fading" of risk profiles
+- Statistical validation (KS-test, C-index)
 
-### ۴.۵ Ranking & Recommendation Service
+### 4.5 Ranking & Recommendation Service
 
-ترکیب امتیازات چندمعیاره برای رتبه‌بندی نهایی:
+Combining multi-criteria scores for the final ranking:
 
 ```
 Final Score = w₁·Efficacy + w₂·Safety + w₃·Synthesizability + w₄·Cost
 ```
 
-### ۴.۶ Synthesis Route Planner
+### 4.6 Synthesis Route Planner
 
-- پیشنهاد مسیر سنتز بر اساس گروه‌های عملکردی
-- برآورد هزینه و زمان سنتز
-- یکپارچه‌سازی با پایگاه‌های واکنش (Reaxys, SciFinder)
+- Suggesting a synthesis route based on functional groups
+- Estimating synthesis cost and time
+- Integration with reaction databases (Reaxys, SciFinder)
 
 ---
 
-## ۵. مدل دامنه
+## 5. Domain Model
 
-### ۵.۱ موجودیت‌های شیمیایی
+### 5.1 Chemical Entities
 
 ```
 Lipid
@@ -285,10 +285,10 @@ LipidRatio
 ├── molar_ratio: float
 ```
 
-### ۵.۲ موجودیت‌های بالینی
+### 5.2 Clinical Entities
 
 ```
-Patient (ناشناس‌سازی‌شده)
+Patient (anonymized)
 ├── id: string (GT_XXXX)
 ├── age: int
 ├── gender: enum
@@ -315,7 +315,7 @@ TreatmentOutcome
 └── cytokine_storm: boolean
 ```
 
-### ۵.۳ موجودیت‌های ML
+### 5.3 ML Entities
 
 ```
 ModelVersion
@@ -344,7 +344,7 @@ SyntheticDataset
 └── generated_at: timestamp
 ```
 
-### ۵.۴ نمودار روابط (ER)
+### 5.4 Relationship Diagram (ER)
 
 ```mermaid
 erDiagram
@@ -388,13 +388,13 @@ erDiagram
 
 ---
 
-## ۶. جریان داده
+## 6. Data Flow
 
-### ۶.۱ جریان طراحی ناقل (Carrier Design Flow)
+### 6.1 Carrier Design Flow
 
 ```mermaid
 sequenceDiagram
-    actor User as محقق
+    actor User as Researcher
     participant UI as Web UI
     participant API as API Gateway
     participant Design as Design Service
@@ -402,24 +402,24 @@ sequenceDiagram
     participant DB as Database
     participant Queue as Task Queue
 
-    User->>UI: تعریف محدودیت‌ها و اهداف
+    User->>UI: Define constraints and goals
     UI->>API: POST /design/jobs
-    API->>Design: ایجاد Design Job
+    API->>Design: Create Design Job
     Design->>Queue: enqueue(generation_task)
-    Queue->>ML: اجرای مدل مولد
-    ML->>ML: تولید + فیلتر + بهینه‌سازی ۳D
-    ML->>DB: ذخیره کاندیداها
-    ML-->>Design: نتایج
+    Queue->>ML: Run generative model
+    ML->>ML: Generate + filter + 3D optimization
+    ML->>DB: Store candidates
+    ML-->>Design: Results
     Design-->>API: job completed
-    API-->>UI: اعلان تکمیل
-    UI-->>User: نمایش کاندیداهای رتبه‌بندی‌شده
+    API-->>UI: Completion notification
+    UI-->>User: Show ranked candidates
 ```
 
-### ۶.۲ جریان تولید داده سنتتیک
+### 6.2 Synthetic Data Generation Flow
 
 ```mermaid
 sequenceDiagram
-    actor User as داده‌شناس
+    actor User as Data scientist
     participant API as API
     participant Synth as Synthetic Data Service
     participant Cox as CoxPH Engine
@@ -428,23 +428,23 @@ sequenceDiagram
     participant Store as Object Storage
 
     User->>API: POST /synthetic/generate
-    API->>Synth: شروع pipeline
-    Synth->>Cox: برازش روی داده واقعی
+    API->>Synth: Start pipeline
+    Synth->>Cox: Fit on real data
     Cox-->>Synth: hazard ratios
-    Synth->>Net: آموزش/استنتاج SynthNet
-    Net-->>Synth: نمونه‌های سنتتیک
-    Synth->>Val: اعتبارسنجی آماری
-    Val-->>Synth: گزارش کیفیت
-    Synth->>Store: ذخیره dataset
+    Synth->>Net: Train/infer SynthNet
+    Net-->>Synth: Synthetic samples
+    Synth->>Val: Statistical validation
+    Val-->>Synth: Quality report
+    Synth->>Store: Store dataset
     Synth-->>API: metadata + download URL
-    API-->>User: نتیجه
+    API-->>User: Result
 ```
 
 ---
 
-## ۷. خط لوله یادگیری ماشین
+## 7. Machine Learning Pipeline
 
-### ۷.۱ پipeline آموزش
+### 7.1 Training Pipeline
 
 ```
 ┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌──────────────┐
@@ -453,27 +453,27 @@ sequenceDiagram
 └─────────────┘    └──────────────┘    └─────────────┘    └──────────────┘
 ```
 
-### ۷.۲ مدل‌های پیشنهادی
+### 7.2 Suggested Models
 
-| مدل | کاربرد | فریم‌ورک |
+| Model | Use | Framework |
 |-----|--------|----------|
-| **MolGPT / ChemGPT** | تولید ساختار لیپیدی | PyTorch |
-| **Graph Neural Network** | پیش‌بینی خواص مولکولی | PyTorch Geometric |
-| **CoxPH** | مدل‌سازی بقا | lifelines / scikit-survival |
-| **SynthNet** | تولید داده سنتتیک | PyTorch |
-| **DeepSurv** | پیش‌بینی عمیق بقا | PyTorch |
-| **Molecular Transformer** | embedding ساختار شیمیایی | HuggingFace |
+| **MolGPT / ChemGPT** | Lipid structure generation | PyTorch |
+| **Graph Neural Network** | Molecular property prediction | PyTorch Geometric |
+| **CoxPH** | Survival modeling | lifelines / scikit-survival |
+| **SynthNet** | Synthetic data generation | PyTorch |
+| **DeepSurv** | Deep survival prediction | PyTorch |
+| **Molecular Transformer** | Chemical structure embedding | HuggingFace |
 
-### ۷.۳ متریک‌های ارزیابی
+### 7.3 Evaluation Metrics
 
-| حوزه | متریک |
+| Area | Metric |
 |------|-------|
-| تولید مولکولی | Validity, Uniqueness, Novelty, FCD |
-| بقا | C-index, Integrated Brier Score |
-| سمیت | AUC-ROC, Sensitivity @ fixed specificity |
-| داده سنتتیک | KS-statistic, MMD, Correlation preservation |
+| Molecular generation | Validity, Uniqueness, Novelty, FCD |
+| Survival | C-index, Integrated Brier Score |
+| Toxicity | AUC-ROC, Sensitivity @ fixed specificity |
+| Synthetic data | KS-statistic, MMD, Correlation preservation |
 
-### ۷.۴ MLOps
+### 7.4 MLOps
 
 ```mermaid
 flowchart LR
@@ -485,52 +485,52 @@ flowchart LR
 
 ---
 
-## ۸. طراحی API
+## 8. API Design
 
-### ۸.۱ اصول
+### 8.1 Principles
 
-- RESTful API با نسخه‌بندی (`/api/v1/`)
-- احراز هویت JWT + API Key
-- پاسخ‌های ناهمزمان برای وظایف ML (Job-based)
+- Versioned RESTful API (`/api/v1/`)
+- JWT + API Key authentication
+- Asynchronous responses for ML tasks (Job-based)
 - OpenAPI 3.0 specification
 
-### ۸.۲ Endpoints اصلی
+### 8.2 Main Endpoints
 
-#### طراحی ناقل
+#### Carrier Design
 
-| Method | Endpoint | توضیح |
+| Method | Endpoint | Description |
 |--------|----------|-------|
-| `POST` | `/api/v1/design/jobs` | ایجاد job طراحی لیپید |
-| `GET` | `/api/v1/design/jobs/{id}` | وضعیت و نتایج job |
-| `GET` | `/api/v1/design/jobs/{id}/candidates` | لیست کاندیداها |
-| `POST` | `/api/v1/design/jobs/{id}/rank` | رتبه‌بندی مجدد |
+| `POST` | `/api/v1/design/jobs` | Create a lipid design job |
+| `GET` | `/api/v1/design/jobs/{id}` | Job status and results |
+| `GET` | `/api/v1/design/jobs/{id}/candidates` | List of candidates |
+| `POST` | `/api/v1/design/jobs/{id}/rank` | Re-ranking |
 
-#### پیش‌بینی
+#### Prediction
 
-| Method | Endpoint | توضیح |
+| Method | Endpoint | Description |
 |--------|----------|-------|
-| `POST` | `/api/v1/predict/efficacy` | پیش‌بینی کارایی انتقال ژن |
-| `POST` | `/api/v1/predict/toxicity` | پیش‌بینی سمیت |
-| `POST` | `/api/v1/predict/outcome` | پیش‌بینی پیامد بالینی |
+| `POST` | `/api/v1/predict/efficacy` | Predict gene delivery efficiency |
+| `POST` | `/api/v1/predict/toxicity` | Predict toxicity |
+| `POST` | `/api/v1/predict/outcome` | Predict clinical outcome |
 
-#### داده سنتتیک
+#### Synthetic Data
 
-| Method | Endpoint | توضیح |
+| Method | Endpoint | Description |
 |--------|----------|-------|
-| `POST` | `/api/v1/synthetic/generate` | تولید dataset سنتتیک |
-| `GET` | `/api/v1/synthetic/datasets` | لیست datasetها |
-| `GET` | `/api/v1/synthetic/datasets/{id}` | دانلود dataset |
+| `POST` | `/api/v1/synthetic/generate` | Generate a synthetic dataset |
+| `GET` | `/api/v1/synthetic/datasets` | List datasets |
+| `GET` | `/api/v1/synthetic/datasets/{id}` | Download a dataset |
 
-#### مدیریت
+#### Management
 
-| Method | Endpoint | توضیح |
+| Method | Endpoint | Description |
 |--------|----------|-------|
-| `GET` | `/api/v1/lipids` | جستجوی لیپید |
-| `POST` | `/api/v1/lipids` | ثبت لیپید جدید |
-| `GET` | `/api/v1/models` | لیست مدل‌های موجود |
-| `GET` | `/api/v1/health` | وضعیت سلامت سیستم |
+| `GET` | `/api/v1/lipids` | Lipid search |
+| `POST` | `/api/v1/lipids` | Register a new lipid |
+| `GET` | `/api/v1/models` | List available models |
+| `GET` | `/api/v1/health` | System health status |
 
-### ۸.۳ نمونه Request/Response
+### 8.3 Sample Request/Response
 
 ```json
 // POST /api/v1/design/jobs
@@ -558,27 +558,27 @@ flowchart LR
 
 ---
 
-## ۹. پایگاه داده و ذخیره‌سازی
+## 9. Database and Storage
 
-### ۹.۱ پایگاه‌های داده
+### 9.1 Databases
 
-| ذخیره‌ساز | کاربرد | فناوری |
+| Storage | Use | Technology |
 |-----------|--------|--------|
-| **Primary DB** | موجودیت‌ها، متادیتا، کاربران | PostgreSQL 16 |
-| **Object Storage** | مدل‌ها، datasetها، ساختار ۳D | MinIO / S3 |
-| **Cache** | نتایج پیش‌بینی، session | Redis 7 |
-| **Vector DB** | جستجوی شباهت مولکولی | Qdrant / Milvus |
-| **Search** | جستجوی متنی و فیلتر | Elasticsearch |
+| **Primary DB** | Entities, metadata, users | PostgreSQL 16 |
+| **Object Storage** | Models, datasets, 3D structures | MinIO / S3 |
+| **Cache** | Prediction results, sessions | Redis 7 |
+| **Vector DB** | Molecular similarity search | Qdrant / Milvus |
+| **Search** | Text search and filtering | Elasticsearch |
 
-### ۹.۲ استراتژی داده
+### 9.2 Data Strategy
 
-- **داده واقعی:** رمزنگاری at-rest و in-transit؛ ناشناس‌سازی PII
-- **داده سنتتیک:** برچسب‌گذاری صریح `synthetic=true`؛ جداسازی از داده واقعی
-- **Lineage:** هر رکورد دارای `source`, `model_version`, `generated_at`
+- **Real data:** encryption at-rest and in-transit; PII anonymization
+- **Synthetic data:** explicit `synthetic=true` labeling; separated from real data
+- **Lineage:** every record has `source`, `model_version`, `generated_at`
 
 ---
 
-## ۱۰. یکپارچه‌سازی آزمایشگاه
+## 10. Laboratory Integration
 
 ```mermaid
 graph LR
@@ -586,53 +586,53 @@ graph LR
     Platform -->|SiLA 2 / OPC-UA| Robot[Lab Robot]
     Platform -->|SFTP / API| Sequencer[NGS / RNA-Seq]
     
-    LIMS -->|نتایج آزمایش| Platform
-    Robot -->|وضعیت سنتز| Platform
-    Sequencer -->|داده بیان ژن| Platform
+    LIMS -->|Test results| Platform
+    Robot -->|Synthesis status| Platform
+    Sequencer -->|Gene expression data| Platform
 ```
 
-### پروتکل‌های پشتیبانی
+### Supported Protocols
 
-| سیستم | پروتکل | داده |
+| System | Protocol | Data |
 |-------|--------|------|
-| LIMS | REST API, HL7 FHIR | نتایج آزمایش، نمونه‌ها |
-| ربات سنتز | SiLA 2, MQTT | دستورات سنتز، وضعیت |
-| توالی‌یابی | SFTP, API | فایل‌های FASTQ, counts |
-| پایگاه‌های مرجع | REST | PubChem, ChEMBL, DrugBank |
+| LIMS | REST API, HL7 FHIR | Test results, samples |
+| Synthesis robot | SiLA 2, MQTT | Synthesis commands, status |
+| Sequencing | SFTP, API | FASTQ files, counts |
+| Reference databases | REST | PubChem, ChEMBL, DrugBank |
 
 ---
 
-## ۱۱. امنیت و انطباق
+## 11. Security and Compliance
 
-### ۱۱.۱ احراز هویت و مجوز
+### 11.1 Authentication and Authorization
 
-| لایه | مکانیزم |
+| Layer | Mechanism |
 |------|---------|
-| احراز هویت | OAuth 2.0 / OIDC, JWT |
-| مجوز | RBAC (Admin, Scientist, Clinician, Viewer) |
+| Authentication | OAuth 2.0 / OIDC, JWT |
+| Authorization | RBAC (Admin, Scientist, Clinician, Viewer) |
 | API | API Key + Rate Limiting |
-| داده | Row-Level Security در PostgreSQL |
+| Data | Row-Level Security in PostgreSQL |
 
-### ۱۱.۲ انطباق
+### 11.2 Compliance
 
-| استاندارد | اقدام |
+| Standard | Action |
 |-----------|-------|
-| **HIPAA** | ناشناس‌سازی PHI، audit log |
-| **GDPR** | حق حذف، consent management |
-| **GMP** | traceability در خط تولید آزمایشگاهی |
-| **21 CFR Part 11** | امضای الکترونیک، audit trail |
+| **HIPAA** | PHI anonymization, audit log |
+| **GDPR** | Right to erasure, consent management |
+| **GMP** | Traceability in the laboratory production line |
+| **21 CFR Part 11** | Electronic signature, audit trail |
 
-### ۱۱.۳ امنیت ML
+### 11.3 ML Security
 
-- جداسازی محیط inference از training
-- اعتبارسنجی ورودی (جلوگیری از adversarial input)
-- مانیتورینگ model drift و data poisoning
+- Separating the inference environment from training
+- Input validation (preventing adversarial input)
+- Monitoring model drift and data poisoning
 
 ---
 
-## ۱۲. زیرساخت و استقرار
+## 12. Infrastructure and Deployment
 
-### ۱۲.۱ معماری استقرار
+### 12.1 Deployment Architecture
 
 ```mermaid
 graph TB
@@ -658,7 +658,7 @@ graph TB
         end
     end
 
-  User((کاربر)) --> LB
+  User((User)) --> LB
     LB --> API_Pods
     API_Pods --> Worker_Pods
     Worker_Pods --> GPU_Node
@@ -666,9 +666,9 @@ graph TB
     K8s --> Observability
 ```
 
-### ۱۲.۲ استک فناوری پیشنهادی
+### 12.2 Suggested Technology Stack
 
-| لایه | فناوری |
+| Layer | Technology |
 |------|--------|
 | **Frontend** | React 19, TypeScript, Tailwind CSS, TanStack Query |
 | **Backend API** | FastAPI (Python 3.12) |
@@ -679,9 +679,9 @@ graph TB
 | **CI/CD** | GitHub Actions |
 | **Monitoring** | Prometheus, Grafana, Sentry |
 
-### ۱۲.۳ نیازمندی‌های سخت‌افزاری
+### 12.3 Hardware Requirements
 
-| محیط | CPU | RAM | GPU |
+| Environment | CPU | RAM | GPU |
 |------|-----|-----|-----|
 | Development | 4 core | 16 GB | — |
 | Staging | 8 core | 32 GB | 1× T4 |
@@ -690,15 +690,15 @@ graph TB
 
 ---
 
-## ۱۳. ساختار پوشه‌های پیشنهادی
+## 13. Proposed Folder Structure
 
 ```
 barekat-gen-therapy/
 ├── README.md
 ├── docs/
-│   ├── ARCHITECTURE.md          # این سند
-│   ├── API.md                   # مستندات API
-│   └── DEPLOYMENT.md            # راهنمای استقرار
+│   ├── ARCHITECTURE.md          # this document
+│   ├── API.md                   # API documentation
+│   └── DEPLOYMENT.md            # deployment guide
 │
 ├── backend/
 │   ├── app/
@@ -739,8 +739,8 @@ barekat-gen-therapy/
 │
 ├── data/
 │   ├── generators/
-│   │   └── synthetic_clinical.py  # (انتقال از data فعلی)
-│   ├── seeds/                     # داده اولیه
+│   │   └── synthetic_clinical.py  # (moved from the current data)
+│   ├── seeds/                     # initial data
 │   └── schemas/                   # JSON Schema
 │
 ├── infra/
@@ -755,68 +755,68 @@ barekat-gen-therapy/
 
 ---
 
-## ۱۴. نقشه راه پیاده‌سازی
+## 14. Implementation Roadmap
 
-### فاز ۱ — پایه (هفته ۱–۴)
+### Phase 1 — Foundation (Weeks 1–4)
 
-| هدف | خروجی |
+| Goal | Output |
 |-----|-------|
-| ساختار پروژه و CI/CD | Repo scaffold, Docker, GitHub Actions |
-| API پایه | FastAPI + PostgreSQL + Auth |
-| Generator داده سنتتیک | انتقال و بهبود اسکریپت `data` |
-| مدل CoxPH | برازش و ارزیابی روی داده سنتتیک |
+| Project structure and CI/CD | Repo scaffold, Docker, GitHub Actions |
+| Basic API | FastAPI + PostgreSQL + Auth |
+| Synthetic data generator | Moving and improving the `data` script |
+| CoxPH model | Fitting and evaluation on synthetic data |
 
-### فاز ۲ — هسته ML (هفته ۵–۱۰)
+### Phase 2 — ML Core (Weeks 5–10)
 
-| هدف | خروجی |
+| Goal | Output |
 |-----|-------|
-| SynthNet | تولید داده سنتتیک با چارچوب CK4Gen |
-| Molecular Encoder | embedding ساختارهای شیمیایی |
-| API پیش‌بینی | endpoints efficacy/toxicity/outcome |
-| Dashboard اولیه | UI برای مشاهده نتایج |
+| SynthNet | Synthetic data generation with the CK4Gen framework |
+| Molecular Encoder | Embedding of chemical structures |
+| Prediction API | efficacy/toxicity/outcome endpoints |
+| Initial dashboard | UI for viewing results |
 
-### فاز ۳ — طراحی ناقل (هفته ۱۱–۱۶)
+### Phase 3 — Carrier Design (Weeks 11–16)
 
-| هدف | خروجی |
+| Goal | Output |
 |-----|-------|
-| مدل مولد لیپید | تولید SMILES معتبر |
-| بهینه‌ساز فرمولاسیون | LNP formulation optimizer |
-| رتبه‌بندی چندمعیاره | Ranking service |
-| ساختار ۳D | RDKit conformer generation |
+| Lipid generative model | Generating valid SMILES |
+| Formulation optimizer | LNP formulation optimizer |
+| Multi-criteria ranking | Ranking service |
+| 3D structure | RDKit conformer generation |
 
-### فاز ۴ — یکپارچه‌سازی (هفته ۱۷–۲۰)
+### Phase 4 — Integration (Weeks 17–20)
 
-| هدف | خروجی |
+| Goal | Output |
 |-----|-------|
-| LIMS connector | دریافت نتایج آزمایش |
-| Lab robot API | ارسال دستورات سنتز |
+| LIMS connector | Receiving test results |
+| Lab robot API | Sending synthesis commands |
 | MLOps pipeline | MLflow, model registry, A/B testing |
-| گزارش‌دهی | PDF/Excel export |
+| Reporting | PDF/Excel export |
 
-### فاز ۵ — تولید (هفته ۲۱+)
+### Phase 5 — Production (Week 21+)
 
-| هدف | خروجی |
+| Goal | Output |
 |-----|-------|
-| امنیت و انطباق | Audit log, encryption, RBAC |
+| Security and compliance | Audit log, encryption, RBAC |
 | Performance tuning | GPU optimization, caching |
-| مستندات کاربر | User guide, API docs |
-| استقرار production | K8s, monitoring, alerting |
+| User documentation | User guide, API docs |
+| Production deployment | K8s, monitoring, alerting |
 
 ---
 
-## پیوست: وضعیت فعلی پروژه
+## Appendix: Current Project Status
 
-| بخش | وضعیت |
+| Section | Status |
 |-----|-------|
-| README (چشم‌انداز محصول) | ✅ موجود |
-| Generator داده سنتتیک (پروتوتایپ) | ✅ موجود (`data`) |
-| معماری محصول | ✅ این سند |
-| زیرساخت (Docker, CI/CD, K8s) | ✅ فاز ۱ |
-| Backend API | 🟡 اسکلت اولیه |
-| Frontend | 🟡 اسکلت اولیه |
-| مدل‌های ML | ⬜ فاز ۲–۳ |
-| یکپارچه‌سازی آزمایشگاه | ⬜ فاز ۴ |
+| README (product vision) | ✅ Available |
+| Synthetic data generator (prototype) | ✅ Available (`data`) |
+| Product architecture | ✅ This document |
+| Infrastructure (Docker, CI/CD, K8s) | ✅ Phase 1 |
+| Backend API | 🟡 Initial skeleton |
+| Frontend | 🟡 Initial skeleton |
+| ML models | ⬜ Phases 2–3 |
+| Laboratory integration | ⬜ Phase 4 |
 
 ---
 
-*آخرین به‌روزرسانی: ۱۴۰۵/۰۴/۲۲ (۲۰۲۶-۰۷-۱۳)*
+*Last updated: 1405/04/22 (2026-07-13)*

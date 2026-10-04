@@ -5,7 +5,7 @@ export function RecoveryHistogram({ histogram }: { histogram: Histogram }) {
 
   return (
     <div style={{ marginTop: "1rem" }}>
-      <h3>توزیع زمان بهبودی (روز)</h3>
+      <h3>Recovery time distribution (days)</h3>
       <div
         style={{
           display: "flex",
@@ -21,7 +21,7 @@ export function RecoveryHistogram({ histogram }: { histogram: Histogram }) {
         {histogram.counts.map((count, i) => (
           <div
             key={i}
-            title={`${histogram.bins[i].toFixed(0)}–${histogram.bins[i + 1]?.toFixed(0) ?? ""} روز: ${count}`}
+            title={`${histogram.bins[i].toFixed(0)}–${histogram.bins[i + 1]?.toFixed(0) ?? ""} days: ${count}`}
             style={{
               flex: 1,
               height: `${(count / maxCount) * 100}%`,

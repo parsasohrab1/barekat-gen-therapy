@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="پلتفرم end-to-end طراحی و بهینه‌سازی ناقل‌های ژنی",
+    description="End-to-end platform for designing and optimizing gene vectors",
     lifespan=lifespan,
 )
 

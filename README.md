@@ -1,8 +1,8 @@
 # Barekat Gen Therapy
 
-پلتفرم end-to-end برای طراحی و بهینه‌سازی ناقل‌های لیپیدی ژن‌درمانی: تولید داده سنتتیک (CK4Gen)، پیش‌بینی بقا (CoxPH)، طراحی/رتبه‌بندی مولکول (RDKit)، یکپارچه‌سازی آزمایشگاه، جستجوی برداری (Qdrant)، و انطباق HIPAA/GDPR/GMP.
+End-to-end platform for designing and optimizing lipid vectors for gene therapy: synthetic data generation (CK4Gen), survival prediction (CoxPH), molecule design/ranking (RDKit), laboratory integration, vector search (Qdrant), and HIPAA/GDPR/GMP compliance.
 
-## راه‌اندازی سریع
+## Quick Start
 
 ```bash
 cp .env.example .env
@@ -11,7 +11,7 @@ make seed-users
 make seed-invitro
 ```
 
-| سرویس | آدرس |
+| Service | Address |
 |-------|------|
 | Frontend | http://localhost:5173 |
 | API / OpenAPI | http://localhost:8000/docs |
@@ -20,30 +20,30 @@ make seed-invitro
 | MinIO | http://localhost:9001 |
 | MQTT | localhost:1883 |
 
-## کاربران staging
+## Staging Users
 
-| کاربر | رمز | نقش |
+| User | Password | Role |
 |-------|-----|-----|
-| `scientist` | `scientist123` | طراحی، آزمایشگاه، پیش‌بینی تحقیقاتی |
-| `clinician` | `clinician123` | پیش‌بینی بالینی |
-| `admin` | `admin123` | انطباق، audit، حذف GDPR |
-| `viewer` | `viewer123` | فقط خواندن |
+| `scientist` | `scientist123` | Design, laboratory, research prediction |
+| `clinician` | `clinician123` | Clinical prediction |
+| `admin` | `admin123` | Compliance, audit, GDPR deletion |
+| `viewer` | `viewer123` | Read-only |
 
-## جریان محصول
+## Product Flow
 
-1. **داده سنتتیک** — CK4Gen + اعتبارسنجی KS/C-index → آموزش CoxPH + MLflow
-2. **پیش‌بینی پیامد** — CoxPH فعال + audit log
-3. **طراحی لیپید** — فیلتر RDKit + dedupe Qdrant + رتبه‌بندی چندمعیاره
-4. **آزمایشگاه** — LIMS sync → MQTT سنتز → import in-vitro → retrain
-5. **انطباق** — pseudonymize، GDPR delete، GMP trace، Part 11 audit
+1. **Synthetic data** — CK4Gen + KS/C-index validation → CoxPH training + MLflow
+2. **Outcome prediction** — active CoxPH + audit log
+3. **Lipid design** — RDKit filter + Qdrant dedupe + multi-criteria ranking
+4. **Laboratory** — LIMS sync → MQTT synthesis → in-vitro import → retrain
+5. **Compliance** — pseudonymize, GDPR delete, GMP trace, Part 11 audit
 
-## مستندات
+## Documentation
 
 - [API](docs/API.md)
-- [استقرار](docs/DEPLOYMENT.md)
-- [معماری](docs/ARCHITECTURE.md)
+- [Deployment](docs/DEPLOYMENT.md)
+- [Architecture](docs/ARCHITECTURE.md)
 
-## توسعه
+## Development
 
 ```bash
 make install
@@ -52,4 +52,4 @@ make test
 make lint
 ```
 
-نسخه فعلی: **1.0.0**
+Current version: **1.0.0**
