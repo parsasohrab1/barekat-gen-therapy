@@ -1,0 +1,21 @@
+{
+ "dataset": "AGILE fine-tuning (Zenodo 21422889)",
+ "results": [
+  {
+   "split": "random 5-fold",
+   "n": 1200,
+   "spearman_model": 0.673,
+   "spearman_best_single_descriptor": 0.357,
+   "top10pct_recall_product_ranking": 0.342,
+   "top10pct_recall_random": 0.102
+  },
+  {
+   "split": "cluster-grouped 5-fold (10 descriptor clusters held out)",
+   "n": 1200,
+   "spearman_model": 0.555,
+   "spearman_best_single_descriptor": 0.075,
+   "top10pct_recall_product_ranking": 0.367,
+   "top10pct_recall_random": 0.102
+  }
+ ]
+}
