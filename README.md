@@ -53,3 +53,8 @@ make lint
 ```
 
 Current version: **1.0.0**
+
+
+## Articles
+
+See [docs/ARTICLE.md](docs/ARTICLE.md) for the article prepared from this product (in preparation) and [docs/TRL.md](docs/TRL.md) for its TRL 4 evidence.
