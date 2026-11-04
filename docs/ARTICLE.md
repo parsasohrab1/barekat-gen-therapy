@@ -1,5 +1,110 @@
-# Article associated with this repository
+Target venue: AiMH 2027 (abstract by 30 Dec 2026, paper by 28 Feb 2027). Status: draft, not submitted. Scope: only `research/lnp_shift` and `research/lnp_cistrans`; patent-claimed functions of the product are not part of the article. A patent attorney must review before submission.
 
-Working title: *Stereochemistry-Aware Representations for Predicting Lipid-Nanoparticle Transfection: A Preliminary Study on Cis/Trans Lipids*
-Target venue: AiMH 2027. Status: in preparation, not submitted.
-Scope: only the component in `research/lnp_shift`; patent-claimed functions of the product are not part of the article.
+# Do Cis and Trans Lipid Isomers Differ in mRNA Transfection? A Paired Analysis of 21 Isomer Pairs in the LANTERN Collection and What Stereo-Aware Features Add
+Mohammad Parsa Sohrabi · Parsa International Group, Istanbul, Türkiye · Petro Pala Toos · oil.ms.sohrabi@gmail.com
+
+
+## Abstract
+Lipid nanoparticles deliver mRNA, and models that predict transfection from lipid structure are used to rank candidates. Common fingerprints can hide double-bond geometry, so cis and trans isomers of a lipid may look identical to a model. We asked whether isomers differ in transfection and whether stereo information helps a model order them. We searched the public LANTERN collection (11,545 measurements, 8,242 distinct structures; file SHA-256 recorded) for lipids that differ only in E/Z geometry and were measured under identical conditions. This gave 21 cis/trans pairs, all from one library of unsaturated dendrimer lipids tested with mRNA in IGROV1 cells; the 14 other stereoisomer pairs differ in tetrahedral stereocentres and were excluded. Trans isomers had higher normalised transfection in 14 pairs and cis in 6 (one tie). The mean difference (cis minus trans) was -0.357 (bootstrap 95% interval -0.697 to -0.029) on a scale where the standard deviation of the library is 1.006; the sign test (p = 0.1153) and the Wilcoxon test (p = 0.062) were not significant. In leave-one-pair-out evaluation with a random forest, a fingerprint without stereo information cannot order the isomers (accuracy 0.50 by construction), a fingerprint with chirality gave 0.667 and a fingerprint with explicit Z/E counts 0.762, whereas the rule "trans is higher" gave 0.69; the intervals overlap. The evidence is weak, rests on one library and one cell line, and is exploratory. It supports checking stereo handling in lipid models, not a general rule about cis and trans lipids.
+
+Keywords: lipid nanoparticles; cis/trans isomers; stereochemistry; transfection; molecular fingerprints
+
+
+## 1. Introduction
+Ionisable lipids are the central component of lipid nanoparticles for mRNA delivery (Hou et al., 2021), and the structure of the lipid strongly affects transfection (Akinc et al., 2008). Machine-learning models trained on libraries of lipids are used to rank untested candidates. Most such models describe a lipid by a circular fingerprint (Rogers and Hahn, 2010) computed from its structural formula. In the RDKit implementation used here, the fingerprint of a molecule ignores the geometry of double bonds unless chirality is switched on, so that the cis and the trans isomer of an unsaturated lipid receive identical vectors. Unsaturated lipid tails are common, and the geometry of a double bond changes the shape and packing of a tail, so a model that cannot see it cannot say anything about the difference.
+
+Two questions follow. First, do cis and trans isomers of the same lipid differ in transfection when the experimental conditions are identical? Second, does giving a model the stereo information help it tell which isomer of a held-out pair transfects better? The LANTERN collection (LANTERN, 2026) brings together transfection measurements from many lipid libraries and makes it possible to look for isomer pairs. We report what it contains, and we are explicit that the answer is limited by the small number of pairs.
+
+
+## 2. Data and methods
+Data. We used the table of transfection measurements supplied with the LANTERN collection (sheet SMILES_TE; 11,545 measurements in 21 sub-collections; 8,242 distinct structures after canonicalisation with stereochemistry; SHA-256 2aebccac67d6b0fb3c29f38dac04b3dde9afc9d87423ad427765b7356e4ff826). The outcome is the normalised transfection efficiency given in the table. The file is not redistributed here.
+
+Finding isomer pairs. Each SMILES string was parsed with RDKit and written in canonical form with and without stereochemistry. Structures with the same stereo-free form but different stereochemical forms were candidate isomers. A pair was kept as a cis/trans pair only if the assigned tetrahedral stereocentres were identical, the number of stereo-defined double bonds was the same and greater than zero, and the numbers of Z and E bonds differed. The member with more Z bonds is called cis. The two members had to have been measured under identical conditions (sub-collection, experiment type, target, gene, cargo, lipid-to-mRNA ratio and the four molar ratios).
+
+Paired comparison. For each pair we took the difference cis minus trans. We report the mean and median, bootstrap 95% intervals (5000 resamples of pairs), a two-sided sign test and a two-sided Wilcoxon signed-rank test (Wilcoxon, 1945; Efron, 1979). These tests were not corrected for multiplicity; the analysis is exploratory.
+
+Prediction. Within the sub-collection that contains the pairs (one value per distinct structure, the mean over repeated rows), a random forest regressor (Breiman, 2001; 300 trees; five random seeds averaged) was trained with all structures except the whole stereo-free group of the held-out pair, and asked to predict both isomers of that pair. Three feature sets were compared: Morgan count fingerprints (radius 2, 1024 bits) without chirality; the same with chirality switched on; and the fingerprint without chirality plus the numbers of Z and E double bonds and the fraction of Z. We report the share of pairs in which the predicted order of cis and trans matched the observed order (a tie counts as one half) with a bootstrap interval over pairs, and the root-mean-square error on the held-out members. As reference we give the accuracy of the constant rules 'trans is higher' and 'cis is higher'.
+
+
+## 3. Results
+Inventory. Of the 8,242 distinct structures, 35 stereo-free groups contain two stereoisomers. In 21 of them the isomers differ only in the geometry of double bonds, and all 21 belong to one sub-collection, a library of unsaturated dendrimer lipids ('UnDen': 91 measurements of 84 structures, mRNA, IGROV1 cells, in vitro). The other 14 groups (Wh HeLa and Akinc sub-collections) differ in tetrahedral stereocentres and were not analysed. In every one of the 21 pairs, all stereo double bonds of one member are Z and all of the other E, with between one and six double bonds (Table 1).
+
+| Stereo double bonds | Normalised TE, cis | Normalised TE, trans | Difference (cis − trans) |
+|---|---|---|---|
+| 2 | -2.131 | -0.518 | -1.613 |
+| 2 | -1.102 | -0.407 | -0.695 |
+| 2 | -1.422 | -0.755 | -0.667 |
+| 2 | -1.798 | -1.158 | -0.640 |
+| 2 | -0.894 | -0.630 | -0.264 |
+| 2 | -1.005 | -0.769 | -0.236 |
+| 2 | -0.755 | -0.755 | +0.000 |
+| 2 | 0.135 | -0.518 | +0.654 |
+| 2 | -0.560 | -1.798 | +1.238 |
+| 3 | -0.296 | -0.268 | -0.028 |
+| 3 | -0.059 | -0.115 | +0.056 |
+| 3 | -0.365 | -0.838 | +0.473 |
+| 4 | -0.073 | 2.179 | -2.253 |
+| 4 | -0.699 | 0.664 | -1.363 |
+| 4 | -0.296 | 1.025 | -1.321 |
+| 4 | 1.776 | 1.859 | -0.083 |
+| 4 | 1.164 | 0.970 | +0.195 |
+| 4 | 2.040 | 1.776 | +0.264 |
+| 6 | -0.157 | 0.886 | -1.043 |
+| 6 | 0.386 | 0.525 | -0.139 |
+| 6 | 0.650 | 0.678 | -0.028 |
+
+Table 1. The 21 cis/trans pairs (UnDen sub-collection; normalised transfection efficiency as given in the LANTERN table).
+
+Paired comparison. Trans isomers had the higher value in 14 pairs and cis isomers in 6; one pair was tied. The mean difference (cis minus trans) was -0.357 (bootstrap 95% interval -0.697 to -0.029) and the median -0.139 (interval -0.667 to 0.0). The standard deviation of all values in this sub-collection is 1.006, so the mean difference is about a third of a standard deviation. The sign test gave p = 0.1153 and the Wilcoxon test p = 0.062. The interval of the mean excludes zero by a small margin, the interval of the median reaches zero, and neither test is significant at the 5% level, so the evidence for a difference is weak.
+
+Prediction. A fingerprint without chirality gives the two isomers the same vector, so it cannot order them and its accuracy is 0.50 by construction (Table 2). With chirality, the order was right in 0.667 of the pairs, and with explicit Z/E counts in 0.762. The constant rule 'trans is higher' was right in 0.69. The intervals of the two stereo-aware models include this value, so the models are not shown to do better than the rule that exploits the imbalance in the data. The root-mean-square error on held-out members was 0.656 without stereo information and 0.631 with Z/E counts, against a standard deviation of 1.006.
+
+| Features | Order accuracy (95% interval) | Ties | RMSE on held-out pairs |
+|---|---|---|---|
+| Morgan, no chirality | 0.50 (all ties) | 21 | 0.656 |
+| Morgan with chirality | 0.667 (0.476–0.857) | 0 | 0.643 |
+| Morgan, no chirality, plus Z/E counts | 0.762 (0.571–0.905) | 0 | 0.631 |
+| Rule: trans is higher | 0.69 | — | — |
+| Rule: cis is higher | 0.31 | — | — |
+
+Table 2. Leave-one-pair-out evaluation of the order of cis and trans within a pair (21 pairs; random forest, five seeds averaged).
+
+
+## 4. Discussion and limitations
+In this collection, trans isomers tend to transfect somewhat better than their cis partners, but the effect is small, uncertain, and rests on 21 pairs from a single library. The direction is not the same in all pairs, and several pairs differ in the number of double bonds, so the data do not separate a geometry effect from an effect of unsaturation. The tests were not planned in advance and several were run, so the borderline significance should not be read as a finding. The prediction results say that adding stereo information does not hurt and may help a little in ordering isomers, but they cannot be distinguished from a rule that always says 'trans'.
+
+What can be said with more confidence is practical: a fingerprint without chirality cannot represent these isomers at all, and switching on chirality (or adding Z/E counts) is cheap. A model trained and evaluated without this information will give identical predictions for isomers whose measured values differ in 20 of the 21 pairs.
+
+Limits. One library, one cell line (IGROV1), one cargo, and the normalised outcome supplied by the collection, whose normalisation we did not reproduce. Measurements within a library may share a batch, so the pairs are not independent of the library effect. Pairs with other kinds of stereoisomerism (tetrahedral centres, 14 groups) were not analysed, and no independent library was available to test whether the direction repeats. The random forest and the fingerprint settings were not tuned. The analysis does not describe any property of a specific product.
+
+Next steps. Obtain measurements designed to compare isomers, with replicates and with matched numbers of double bonds; look for further E/Z pairs in other collections; and report, for any lipid model, whether its representation can distinguish stereoisomers.
+
+
+## 5. Conclusion
+Among 21 cis/trans lipid pairs in the LANTERN collection, all from one dendrimer library, trans isomers transfected better in 14 and cis in 6, with a mean difference of -0.357 standard-deviation-scale units that is not significant by sign or Wilcoxon tests. Stereo-aware features let a model order isomers, but not demonstrably better than a constant rule. The result is preliminary; its main use is to show that stereo handling needs to be checked in lipid models.
+
+
+## Implementation and reproducibility
+The study is the repository barekat-gen-therapy, directory research/lnp_cistrans (stereo.py, run.py, tests; results.json). It was run with: python -m research.lnp_cistrans.run --xlsx LNPs_TE_SMILES_Transfection_Extract.xlsx. The input file has SHA-256 2aebccac67d6b0fb3c29f38dac04b3dde9afc9d87423ad427765b7356e4ff826. RDKit 2026.09.1, Python 3.13, scikit-learn and SciPy at current versions. Unit tests (8 in total with the earlier component) use toy molecules written in the tests.
+
+
+## Data and code availability
+The LANTERN table is a third-party resource and is not redistributed; it can be obtained from the publication cited below. Code, tests and result file are in the author's private repository and are available on request.
+
+
+## Declarations
+Author contributions: the author designed the study, wrote the code, ran the experiments, analysed the results and wrote the manuscript.
+
+The author received no specific external funding for this work.
+
+Competing interests: The author is the founder and chief executive of Petro Pala Toos, which develops industrial AI products and has filed patent applications in related application areas. No claim of those applications is disclosed, implemented or evaluated in this paper; all methods used here are standard published components.
+
+
+## References
+- Akinc, A. et al. (2008) A combinatorial library of lipid-like materials for delivery of RNAi therapeutics. Nature Biotechnology, 26(5), 561–569.
+- Breiman, L. (2001) Random forests. Machine Learning, 45(1), 5–32.
+- Efron, B. (1979) Bootstrap methods: another look at the jackknife. Annals of Statistics, 7(1), 1–26.
+- Hou, X., Zaks, T., Langer, R. and Dong, Y. (2021) Lipid nanoparticles for mRNA delivery. Nature Reviews Materials, 6, 1078–1094.
+- LANTERN (2026) Collection of lipid-nanoparticle transfection data. Briefings in Bioinformatics, 27(2), bbag092. https://academic.oup.com/bib/article/27/2/bbag092/8503315
+- Rogers, D. and Hahn, M. (2010) Extended-connectivity fingerprints. Journal of Chemical Information and Modeling, 50(5), 742–754.
+- Wilcoxon, F. (1945) Individual comparisons by ranking methods. Biometrics Bulletin, 1(6), 80–83.
