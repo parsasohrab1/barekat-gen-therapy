@@ -1,0 +1,68 @@
+{
+  "file_sha256": "2aebccac67d6b0fb3c29f38dac04b3dde9afc9d87423ad427765b7356e4ff826",
+  "rows": 11545,
+  "unique_structures": 8242,
+  "pair_rows_by_dataset": {
+    "UnDen": 21
+  },
+  "paired": {
+    "n_pairs": 21,
+    "mean_diff_cis_minus_trans": -0.357,
+    "median_diff": -0.139,
+    "mean_diff_ci95": [
+      -0.697,
+      -0.029
+    ],
+    "median_diff_ci95": [
+      -0.667,
+      0.0
+    ],
+    "cis_higher": 6,
+    "trans_higher": 14,
+    "sign_test_p": 0.1153,
+    "wilcoxon_p": 0.062,
+    "sd_of_all_values_in_dataset": {
+      "UnDen": 1.006
+    }
+  },
+  "prediction_datasets": [
+    "UnDen"
+  ],
+  "dataset_sd_normalized_te": {
+    "UnDen": 1.006
+  },
+  "n_lipids_in_prediction_set": 84,
+  "leave_one_pair_out": {
+    "morgan_blind": {
+      "order_accuracy": 0.5,
+      "order_accuracy_ci95": [
+        0.5,
+        0.5
+      ],
+      "ties": 21,
+      "rmse_on_held_out_pairs": 0.656
+    },
+    "morgan_chirality": {
+      "order_accuracy": 0.667,
+      "order_accuracy_ci95": [
+        0.476,
+        0.857
+      ],
+      "ties": 0,
+      "rmse_on_held_out_pairs": 0.643
+    },
+    "morgan_blind+ZE": {
+      "order_accuracy": 0.762,
+      "order_accuracy_ci95": [
+        0.571,
+        0.905
+      ],
+      "ties": 0,
+      "rmse_on_held_out_pairs": 0.631
+    }
+  },
+  "constant_rules_order_accuracy": {
+    "always_trans_higher": 0.69,
+    "always_cis_higher": 0.31
+  }
+}
